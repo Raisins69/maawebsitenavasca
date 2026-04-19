@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Solar System Render — a scientifically accurate 3D animation of the solar system created with Blender and Python scripting.">
+    <link rel="icon" type="image/x-icon" href="/multimedia/images/favicon.png">
+    <title>Solar System Render | Navasca's Multimedia Portfolio</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="nav-glass" id="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-film"></i>
+                <span>Navasca's Multimedia Portfolio</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html">Home</a>
+                <a href="rotoscoping.html">Rotoscoping</a>
+                <a href="solar-system.html" class="active">Solar System</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+
+        <a href="index.html" class="back-link fade-up">
+            <i class="fas fa-chevron-left"></i> Back to Home
+        </a>
+
+        <!-- Hero Header -->
+        <section class="hero-glass fade-up" style="margin-bottom:4rem;">
+            <div class="glow-ring magenta" style="width:350px;height:350px;top:-150px;left:-100px;"></div>
+            <h1 class="gradient-text">Solar System Animation</h1>
+            <p>A comprehensive 3D animation of our solar system created using Blender with Python scripting for accurate
+                planetary motion and physics. Explore each celestial body in detail.</p>
+        </section>
+
+
+        <!-- Age Calculator Section -->
+        <section class="age-calculator fade-up" style="margin-bottom:4rem;">
+            <h2 style="font-size:1.8rem; text-align:center; margin-bottom:0.75rem; position:relative; z-index:2;">Planetary Age Calculator</h2>
+            <p class="text-center" style="color:rgba(255,255,255,0.75); margin-bottom:2rem; position:relative; z-index:2;">Enter your age in Earth years to discover how old you would be on other planets!</p>
+
+            <div class="flex justify-center items-center gap-2" style="margin-bottom:2rem; position:relative; z-index:2; flex-wrap:wrap;">
+                <input type="number" id="ageInput" class="age-input" placeholder="Enter your age" min="0" max="150">
+                <button onclick="calculateAges()" class="calculate-btn">
+                    <i class="fas fa-calculator" style="margin-right:0.5rem;"></i>Calculate
+                </button>
+            </div>
+
+            <div id="ageResults" class="hidden" style="position:relative; z-index:2;">
+                <div class="grid-3" id="planetAges">
+                    <!-- Planet age cards inserted by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Project Overview -->
+        <section class="overview-glass fade-up" style="margin-bottom:4rem;">
+            <h2 style="font-size:1.8rem; margin-bottom:1.5rem;">Project Overview</h2>
+            <div class="grid-3" style="margin-bottom:2rem;">
+                <div class="overview-stat">
+                    <h3>Tools Used</h3>
+                    <p>Blender 4.4.1, Python 3.11</p>
+                </div>
+                <div class="overview-stat">
+                    <h3>Render Time</h3>
+                    <p>1 hour 45 minutes</p>
+                </div>
+                <div class="overview-stat">
+                    <h3>Resolution</h3>
+                    <p>1920 x 1080 (1080p)</p>
+                </div>
+            </div>
+            <div class="text-secondary" style="line-height:1.75;">
+                <p style="margin-bottom:1rem;">
+                    This solar system animation combines artistic visualization with scientific accuracy. Each celestial body
+                    rotates on its axis and revolves around the Sun with astronomically accurate timing and axial tilts.
+                </p>
+                <p>
+                    The Python script handles orbital mechanics and positioning based on real astronomical data, ensuring
+                    relative speeds and distances are accurate while maintaining visual clarity.
+                </p>
+            </div>
+        </section>
+
+        <!-- Celestial Bodies -->
+        <section class="content-section">
+            <div class="section-title fade-up">
+                <h2><span class="gradient-text">Celestial Bodies</span></h2>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:2rem;" id="celestialBodies">
+                <!-- Generated by JS -->
+            </div>
+        </section>
+
+        <!-- Download Section -->
+        <section class="content-section fade-up">
+            <div class="cta-glass">
+                <h2>Download Project Files</h2>
+                <p>Get access to the complete Blender project, Python scripts, and high-resolution renders.</p>
+                <div class="btn-group">
+                    <a href="https://drive.google.com/file/d/1CrPEXlkOzcb1mbIk17C9sgMS9_jNmJV2/view?usp=sharing"
+                       target="_blank" rel="noopener noreferrer" class="btn-glow btn-glow-white">
+                        <i class="fas fa-download"></i> Download Blender Project
+                    </a>
+                    <a href="rotoscoping.html" class="btn-glow btn-glow-dark">
+                        <i class="fas fa-chevron-left"></i> View Rotoscoping Project
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-glass">
+        <div class="footer-inner">
+            <p>&copy; <span id="current-year"></span> Navasca, Sedriel H.</p>
+            <div class="footer-socials">
+                <a href="https://github.com/AkiraJade" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="mailto:sedriel.navasca@example.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Celestial bodies data
+        const celestialBodies = [
+            {
+                name: "Sun",
+                description: "The Sun is the star at the center of our solar system, providing light and heat to all planets.",
+                diameter: "1,392,700 km",
+                distanceFromSun: "0 km (center)",
+                orbitalPeriod: "N/A",
+                rotationPeriod: "25-35 days",
+                moons: "0",
+                composition: "73% Hydrogen, 25% Helium, 2% Other",
+                temperature: "5,778 K (surface), 15 million K (core)",
+                funFacts: [
+                    "The Sun contains 99.86% of the Solar System's mass",
+                    "It's classified as a G-type main-sequence star",
+                    "The Sun's core temperature is about 27 million degrees Fahrenheit",
+                    "It converts 600 million tons of hydrogen into helium every second"
+                ],
+                videoUrl: "videos/Sun.mp4",
+                icon: "☀️",
+                iconClass: "sun-icon",
+                orbitalPeriodYears: 0
+            },
+            {
+                name: "Mercury",
+                description: "Mercury is the smallest planet and closest to the Sun, with extreme temperature variations.",
+                diameter: "4,879 km",
+                distanceFromSun: "57.9 million km",
+                orbitalPeriod: "88 Earth days",
+                rotationPeriod: "59 Earth days",
+                moons: "0",
+                composition: "Large iron core, thin silicate mantle",
+                temperature: "-173°C to 427°C",
+                funFacts: [
+                    "Mercury has no atmosphere to retain heat",
+                    "A day on Mercury lasts longer than its year",
+                    "It has the most eccentric orbit of all planets",
+                    "Mercury is shrinking as its iron core cools"
+                ],
+                videoUrl: "videos/Mercury.mp4",
+                icon: "☿",
+                iconClass: "mercury-icon",
+                orbitalPeriodYears: 0.241
+            },
+            {
+                name: "Venus",
+                description: "Venus is the hottest planet in our solar system due to its thick, toxic atmosphere.",
+                diameter: "12,104 km",
+                distanceFromSun: "108.2 million km",
+                orbitalPeriod: "225 Earth days",
+                rotationPeriod: "243 Earth days (retrograde)",
+                moons: "0",
+                composition: "Rocky with dense atmosphere of CO2",
+                temperature: "462°C (surface)",
+                funFacts: [
+                    "Venus rotates backwards compared to most planets",
+                    "Its atmosphere is 96.5% carbon dioxide",
+                    "Surface pressure is 92 times that of Earth",
+                    "Venus is often called Earth's 'evil twin'"
+                ],
+                videoUrl: "videos/Venus.mp4",
+                icon: "♀",
+                iconClass: "venus-icon",
+                orbitalPeriodYears: 0.615
+            },
+            {
+                name: "Earth",
+                description: "Earth is the only known planet to harbor life, with liquid water and a protective atmosphere.",
+                diameter: "12,756 km",
+                distanceFromSun: "149.6 million km",
+                orbitalPeriod: "365.25 days",
+                rotationPeriod: "24 hours",
+                moons: "1 (The Moon)",
+                composition: "Rocky with 71% water surface coverage",
+                temperature: "-89°C to 58°C",
+                funFacts: [
+                    "Earth is the only planet not named after a god",
+                    "It has the largest moon relative to planet size",
+                    "Earth's magnetic field protects us from solar radiation",
+                    "The planet is about 4.54 billion years old"
+                ],
+                videoUrl: "videos/Earth.mp4",
+                icon: "🌍",
+                iconClass: "earth-icon",
+                orbitalPeriodYears: 1.0
+            },
+            {
+                name: "Mars",
+                description: "Mars, the 'Red Planet', has the largest volcano and canyon in the solar system.",
+                diameter: "6,792 km",
+                distanceFromSun: "227.9 million km",
+                orbitalPeriod: "687 Earth days",
+                rotationPeriod: "24.6 hours",
+                moons: "2 (Phobos, Deimos)",
+                composition: "Rocky with iron oxide surface",
+                temperature: "-87°C to -5°C",
+                funFacts: [
+                    "Mars has the largest volcano in the solar system (Olympus Mons)",
+                    "It has seasons similar to Earth due to axial tilt",
+                    "Mars has polar ice caps made of water and CO2",
+                    "Evidence suggests Mars once had liquid water"
+                ],
+                videoUrl: "videos/Mars.mp4",
+                icon: "♂",
+                iconClass: "mars-icon",
+                orbitalPeriodYears: 1.881
+            },
+            {
+                name: "Jupiter",
+                description: "Jupiter is the largest planet, a gas giant with a Great Red Spot storm larger than Earth.",
+                diameter: "142,984 km",
+                distanceFromSun: "778.5 million km",
+                orbitalPeriod: "12 Earth years",
+                rotationPeriod: "9.9 hours",
+                moons: "95+ (including Io, Europa, Ganymede, Callisto)",
+                composition: "Mostly hydrogen and helium",
+                temperature: "-108°C (cloud tops)",
+                funFacts: [
+                    "Jupiter's Great Red Spot is a storm larger than Earth",
+                    "It acts as a 'cosmic vacuum cleaner' protecting inner planets",
+                    "Jupiter has a faint ring system",
+                    "It has more mass than all other planets combined"
+                ],
+                videoUrl: "videos/Jupiter.mp4",
+                icon: "♃",
+                iconClass: "jupiter-icon",
+                orbitalPeriodYears: 11.86
+            },
+            {
+                name: "Saturn",
+                description: "Saturn is famous for its spectacular ring system and is less dense than water.",
+                diameter: "120,536 km",
+                distanceFromSun: "1.43 billion km",
+                orbitalPeriod: "29 Earth years",
+                rotationPeriod: "10.7 hours",
+                moons: "146+ (including Titan, Enceladus)",
+                composition: "Mostly hydrogen and helium",
+                temperature: "-139°C (cloud tops)",
+                funFacts: [
+                    "Saturn would float in water if there was a bathtub big enough",
+                    "Its rings are made mostly of ice particles",
+                    "Titan, its largest moon, has lakes of liquid methane",
+                    "Saturn's hexagonal storm at its north pole is unique"
+                ],
+                videoUrl: "videos/Saturn.mp4",
+                icon: "♄",
+                iconClass: "saturn-icon",
+                orbitalPeriodYears: 29.46
+            },
+            {
+                name: "Uranus",
+                description: "Uranus is an ice giant that rotates on its side, making it unique among planets.",
+                diameter: "51,118 km",
+                distanceFromSun: "2.87 billion km",
+                orbitalPeriod: "84 Earth years",
+                rotationPeriod: "17.2 hours (retrograde)",
+                moons: "27+ (including Miranda, Ariel, Umbriel)",
+                composition: "Water, methane, and ammonia ices",
+                temperature: "-197°C",
+                funFacts: [
+                    "Uranus rotates on its side at a 98-degree angle",
+                    "It was the first planet discovered with a telescope",
+                    "Uranus has faint rings discovered in 1977",
+                    "Its blue-green color comes from methane in its atmosphere"
+                ],
+                videoUrl: "videos/Uranus.mp4",
+                icon: "♅",
+                iconClass: "uranus-icon",
+                orbitalPeriodYears: 84.01
+            },
+            {
+                name: "Neptune",
+                description: "Neptune is the windiest planet with speeds reaching 2,100 km/h, despite being farthest from the Sun.",
+                diameter: "49,528 km",
+                distanceFromSun: "4.5 billion km",
+                orbitalPeriod: "165 Earth years",
+                rotationPeriod: "16.1 hours",
+                moons: "16+ (including Triton)",
+                composition: "Water, methane, and ammonia ices",
+                temperature: "-201°C",
+                funFacts: [
+                    "Neptune has the fastest winds in the solar system",
+                    "It was discovered through mathematical predictions",
+                    "Triton, its largest moon, orbits backwards",
+                    "Neptune radiates 2.6 times more energy than it receives from the Sun"
+                ],
+                videoUrl: "videos/Neptune.mp4",
+                icon: "♆",
+                iconClass: "neptune-icon",
+                orbitalPeriodYears: 164.8
+            },
+            {
+                name: "Pluto",
+                description: "Pluto, now classified as a dwarf planet, has a heart-shaped feature and five known moons.",
+                diameter: "2,376 km",
+                distanceFromSun: "5.9 billion km",
+                orbitalPeriod: "248 Earth years",
+                rotationPeriod: "6.4 Earth days",
+                moons: "5 (including Charon)",
+                composition: "Rock and ice",
+                temperature: "-229°C",
+                funFacts: [
+                    "Pluto was reclassified as a dwarf planet in 2006",
+                    "It has a heart-shaped nitrogen plain called Tombaugh Regio",
+                    "Charon is so large it's almost a double planet system",
+                    "Pluto takes 248 Earth years to orbit the Sun once"
+                ],
+                videoUrl: "videos/Pluto.mp4",
+                icon: "♇",
+                iconClass: "pluto-icon",
+                orbitalPeriodYears: 248.0
+            }
+        ];
+
+        // Age calculator function
+        function calculateAges() {
+            const ageInput = document.getElementById('ageInput');
+            const earthAge = parseFloat(ageInput.value);
+
+            if (!earthAge || earthAge <= 0) {
+                alert('Please enter a valid age!');
+                return;
+            }
+
+            const ageResults = document.getElementById('ageResults');
+            const planetAges = document.getElementById('planetAges');
+
+            planetAges.innerHTML = '';
+
+            celestialBodies.slice(1).forEach(planet => {
+                const planetAge = planet.orbitalPeriodYears > 0 ? (earthAge / planet.orbitalPeriodYears).toFixed(2) : 0;
+                const revolutions = planet.orbitalPeriodYears > 0 ? Math.floor(earthAge / planet.orbitalPeriodYears) : 0;
+
+                const card = document.createElement('div');
+                card.className = 'planet-age-card';
+                card.innerHTML = `
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="planet-icon ${planet.iconClass}" style="width:56px;height:56px;font-size:1.4rem;">
+                            ${planet.icon}
+                        </div>
+                        <div>
+                            <h3 style="font-size:1.15rem; margin-bottom:0.15rem;">${planet.name}</h3>
+                            <p style="color:var(--purple-soft); font-size:0.95rem;">Age: ${planetAge} years</p>
+                        </div>
+                    </div>
+                    <div style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6;">
+                        <p><strong>Revolutions:</strong> ${revolutions}</p>
+                        <p><strong>Orbit Time:</strong> ${planet.orbitalPeriodYears} Earth years</p>
+                        <p><strong>Distance:</strong> ${planet.distanceFromSun}</p>
+                    </div>
+                `;
+                planetAges.appendChild(card);
+            });
+
+            ageResults.classList.remove('hidden');
+            ageResults.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Allow Enter key
+        document.getElementById('ageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calculateAges();
+        });
+
+        // Generate celestial bodies
+        function generateCelestialBodies() {
+            const container = document.getElementById('celestialBodies');
+
+            celestialBodies.forEach((body, index) => {
+                const section = document.createElement('div');
+                section.className = 'planet-section';
+
+                const isReversed = index % 2 === 1;
+
+                section.innerHTML = `
+                    <div class="planet-info" style="padding:2.5rem;">
+                        <div class="flex items-center gap-3" style="margin-bottom:1.5rem;">
+                            <div class="planet-icon ${body.iconClass}">
+                                ${body.icon}
+                            </div>
+                            <h2 style="margin:0;">${body.name}</h2>
+                        </div>
+                        <p style="color:var(--text-secondary); line-height:1.7; margin-bottom:1.5rem; font-size:1.05rem;">${body.description}</p>
+
+                        <div class="facts-grid">
+                            <div class="fact-card">
+                                <h4>Diameter</h4>
+                                <p>${body.diameter}</p>
+                            </div>
+                            <div class="fact-card">
+                                <h4>Distance from Sun</h4>
+                                <p>${body.distanceFromSun}</p>
+                            </div>
+                            <div class="fact-card">
+                                <h4>Orbital Period</h4>
+                                <p>${body.orbitalPeriod}</p>
+                            </div>
+                            <div class="fact-card">
+                                <h4>Rotation Period</h4>
+                                <p>${body.rotationPeriod}</p>
+                            </div>
+                            <div class="fact-card">
+                                <h4>Moons</h4>
+                                <p>${body.moons}</p>
+                            </div>
+                            <div class="fact-card">
+                                <h4>Temperature</h4>
+                                <p>${body.temperature}</p>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom:1rem;">
+                            <h4 style="color:var(--pink-accent); font-size:0.9rem; font-weight:600; margin-bottom:0.35rem;">Composition</h4>
+                            <p class="text-secondary">${body.composition}</p>
+                        </div>
+
+                        <div class="fun-facts">
+                            <h4>Fun Facts</h4>
+                            <ul>
+                                ${body.funFacts.map(fact => `<li>${fact}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(section);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            generateCelestialBodies();
+        });
+
+        // Mobile nav toggle
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        navToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

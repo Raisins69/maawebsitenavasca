@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contact Navasca, Sedriel H. — BSIT-S-2A student and multimedia portfolio creator.">
+  <link rel="icon" type="image/x-icon" href="/multimedia/images/favicon.png">
+  <title>Contact | Navasca's Multimedia Portfolio</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ---- Contact Page Specific Styles ---- */
+    .contact-profile-card {
+      max-width: 520px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .profile-picture-wrapper {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 2rem;
+    }
+
+    .profile-picture-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--purple-vivid), var(--orchid), var(--magenta-glow));
+      animation: ringRotate 6s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes ringRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .profile-picture-ring::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      background: var(--midnight-dark);
+    }
+
+    .profile-picture {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      z-index: 1;
+      box-shadow:
+        0 0 40px rgba(139, 92, 246, 0.25),
+        0 0 80px rgba(139, 92, 246, 0.08);
+      transition: var(--transition-smooth);
+    }
+
+    .profile-picture:hover {
+      transform: scale(1.04);
+      box-shadow:
+        0 0 50px rgba(139, 92, 246, 0.35),
+        0 0 100px rgba(139, 92, 246, 0.12);
+    }
+
+    .profile-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .profile-section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.5rem;
+      border-radius: var(--radius-full);
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--purple-soft);
+      background: var(--purple-faint);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      box-shadow: var(--neo-inset);
+      letter-spacing: 0.04em;
+    }
+
+    .profile-divider {
+      width: 80px;
+      height: 3px;
+      margin: 2rem auto;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--purple-vivid), var(--orchid));
+      opacity: 0.5;
+    }
+
+    .contact-info-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .contact-info-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--glass-bg);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid rgba(139, 92, 246, 0.12);
+      border-radius: var(--radius-md);
+      box-shadow: var(--neo-flat);
+      transition: var(--transition-smooth);
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .contact-info-item:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--neo-raised);
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+
+    .contact-info-item .icon-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--purple-vivid), var(--orchid));
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+    }
+
+    .contact-info-item .info-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .contact-info-item .info-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+
+    .contact-info-item .info-value {
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* Floating particles behind profile card */
+    .contact-particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: inherit;
+    }
+
+    .contact-particles .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.08;
+      animation: particleFloat 8s ease-in-out infinite;
+    }
+
+    @keyframes particleFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-20px) scale(1.15); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="nav-glass" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <i class="fas fa-film"></i>
+        <span>Navasca's Multimedia Portfolio</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="rotoscoping.html">Rotoscoping</a>
+        <a href="solar-system.html">Solar System</a>
+        <a href="contact.html" class="active">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+
+    <a href="index.html" class="back-link fade-up">
+      <i class="fas fa-chevron-left"></i> Back to Home
+    </a>
+
+    <!-- Hero Section -->
+    <section class="hero-glass fade-up" style="margin-bottom: 3rem;">
+      <div class="glow-ring purple" style="width:350px;height:350px;top:-180px;left:-80px;"></div>
+      <div class="glow-ring magenta" style="width:280px;height:280px;bottom:-140px;right:-60px;"></div>
+      <h1 class="gradient-text">Get In Touch</h1>
+      <p>Feel free to reach out for collaborations, questions, or just to say hello!</p>
+    </section>
+
+    <!-- Profile Card -->
+    <section class="content-section fade-up" style="padding-top:0;">
+      <div class="glass-card-strong" style="padding: 3.5rem 2rem; border-radius: var(--radius-xl); position: relative; overflow: hidden;">
+        
+        <!-- Decorative particles -->
+        <div class="contact-particles">
+          <div class="particle" style="width:180px;height:180px;background:var(--purple-neon);top:10%;left:-5%;animation-delay:0s;"></div>
+          <div class="particle" style="width:120px;height:120px;background:var(--magenta-glow);bottom:5%;right:-3%;animation-delay:2s;"></div>
+          <div class="particle" style="width:80px;height:80px;background:var(--orchid);top:50%;right:20%;animation-delay:4s;filter:blur(40px);"></div>
+        </div>
+
+        <div class="contact-profile-card relative z-10">
+
+          <!-- Profile Picture -->
+          <div class="profile-picture-wrapper">
+            <div class="profile-picture-ring"></div>
+            <img 
+              src="images/profile.png" 
+              alt="Navasca, Sedriel H. — Profile Picture" 
+              class="profile-picture"
+            >
+          </div>
+
+          <!-- Name -->
+          <h2 class="profile-name gradient-text">Navasca, Sedriel H.</h2>
+
+          <!-- Section -->
+          <div style="margin-top: 0.75rem;">
+            <span class="profile-section-badge">
+              <i class="fas fa-graduation-cap"></i>
+              BSIT-S-2A
+            </span>
+          </div>
+
+          <div class="profile-divider"></div>
+
+          <!-- Bio -->
+          <p class="text-secondary" style="max-width:400px; margin: 0 auto 2rem; line-height:1.75; font-size:1.05rem;">
+            A passionate BSIT student exploring the world of multimedia arts — from rotoscoping animations to 3D solar system renders.
+          </p>
+
+          <!-- Contact Info Cards -->
+          <div class="contact-info-grid">
+            <a href="mailto:sedriel.navasca@example.com" class="contact-info-item">
+              <div class="icon-circle">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="info-text">
+                <span class="info-label">Email</span>
+                <span class="info-value">sedriel.navasca@example.com</span>
+              </div>
+            </a>
+
+            <a href="tel:09273772079" class="contact-info-item">
+              <div class="icon-circle" style="background: linear-gradient(135deg, #22c55e, #059669);">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div class="info-text">
+                <span class="info-label">Phone</span>
+                <span class="info-value">09273772079</span>
+              </div>
+            </a>
+
+            <a href="https://github.com/AkiraJade" target="_blank" rel="noopener noreferrer" class="contact-info-item">
+              <div class="icon-circle">
+                <i class="fab fa-github"></i>
+              </div>
+              <div class="info-text">
+                <span class="info-label">GitHub</span>
+                <span class="info-value">@AkiraJade</span>
+              </div>
+            </a>
+
+            <div class="contact-info-item" style="cursor:default;">
+              <div class="icon-circle" style="background: linear-gradient(135deg, var(--magenta-glow), var(--violet-deep));">
+                <i class="fas fa-school"></i>
+              </div>
+              <div class="info-text">
+                <span class="info-label">Program & Section</span>
+                <span class="info-value">BSIT-S-2A</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="content-section fade-up">
+      <div class="cta-glass">
+        <h2>Explore My Work</h2>
+        <p>Take a look at my multimedia projects and creative explorations.</p>
+        <div class="btn-group">
+          <a href="rotoscoping.html" class="btn-glow btn-glow-white">
+            <i class="fas fa-film"></i> Rotoscoping
+          </a>
+          <a href="solar-system.html" class="btn-glow btn-glow-dark">
+            <i class="fas fa-rocket"></i> Solar System
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer-glass">
+    <div class="footer-inner">
+      <p>&copy; <span id="current-year"></span> Navasca, Sedriel H.</p>
+      <div class="footer-socials">
+        <a href="https://github.com/AkiraJade" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="mailto:sedriel.navasca@example.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Set current year
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+
+    // Mobile nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    navToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>
