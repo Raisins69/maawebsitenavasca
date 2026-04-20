@@ -30,156 +30,198 @@
     </div>
   </nav>
 
-  <!-- Main Content -->
-  <main class="container" style="padding-top: 4rem; padding-bottom: 4rem;">
-
-    <!-- Hero Section -->
-    <section class="hero-glass fade-up">
-      <!-- Glow accents -->
-      <div class="glow-ring purple" style="width:400px;height:400px;top:-200px;left:-100px;"></div>
-      <div class="glow-ring magenta" style="width:300px;height:300px;bottom:-150px;right:-80px;"></div>
-
-      <h1 class="gradient-text">Navasca's Multimedia Portfolio</h1>
-      <p>Showcasing my journey in rotoscoping and 3D rendering through innovative digital art and animation</p>
-      <div class="btn-group">
-        <a href="rotoscoping.html" class="btn-glow btn-glow-primary">
-          <i class="fas fa-play"></i> View My Work
-        </a>
-        <a href="#projects" class="btn-glow btn-glow-secondary">
-          <i class="fas fa-arrow-down"></i> Explore Projects
-        </a>
-      </div>
-    </section>
-
-    <!-- Projects Section -->
-    <section id="projects" class="content-section">
-      <div class="section-title fade-up">
-        <h2><span class="gradient-text">Featured Projects</span></h2>
-      </div>
-
-      <div class="grid-2 stagger-children">
-        <!-- Rotoscoping Project -->
-        <div class="project-card">
-          <div class="relative z-10">
-            <div class="flex items-center gap-3 mb-3">
-              <div class="project-icon purple-icon">
-                <i class="fas fa-film"></i>
-              </div>
-              <div>
-                <h3 style="font-size:1.4rem; margin-bottom:0.2rem;">Rotoscoping Journey</h3>
-                <span class="text-purple" style="font-size:0.9rem;">Animation Technique</span>
-              </div>
-            </div>
-            <p class="text-secondary" style="line-height:1.7; margin-bottom:1.5rem;">
-              Follow my comprehensive progress from week 3 to week 13, showcasing the evolution of rotoscoping skills
-              and techniques culminating in a final animated masterpiece.
-            </p>
-            <div class="flex flex-wrap gap-1 mb-3">
-              <span class="tag">After Effects</span>
-              <span class="tag">Frame Animation</span>
-              <span class="tag">Digital Art</span>
-            </div>
-            <a href="rotoscoping.html" class="btn-glow btn-glow-primary" style="margin-top:0.5rem;">
-              View Progress <i class="fas fa-chevron-right" style="margin-left:0.5rem;"></i>
-            </a>
+  <!-- New Dynamic Layout -->
+  <div class="dynamic-layout">
+    
+    <!-- Split Hero Section -->
+    <section class="split-hero">
+      <div class="hero-left">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <i class="fas fa-code"></i>
+            <span>Digital Creator</span>
           </div>
-        </div>
-
-        <!-- Solar System Project -->
-        <div class="project-card">
-          <div class="relative z-10">
-            <div class="flex items-center gap-3 mb-3">
-              <div class="project-icon pink-icon">
-                <i class="fas fa-rocket"></i>
-              </div>
-              <div>
-                <h3 style="font-size:1.4rem; margin-bottom:0.2rem;">Solar System Render</h3>
-                <span class="text-pink" style="font-size:0.9rem;">3D Animation</span>
-              </div>
-            </div>
-            <p class="text-secondary" style="line-height:1.7; margin-bottom:1.5rem;">
-              A scientifically accurate 3D solar system animation created with Blender and Python scripting,
-              featuring realistic planetary motion and physics.
-            </p>
-            <div class="flex flex-wrap gap-1 mb-3">
-              <span class="tag pink">Blender</span>
-              <span class="tag pink">Python</span>
-              <span class="tag pink">3D Rendering</span>
-            </div>
-            <a href="solar-system.html" class="btn-glow btn-glow-primary" style="margin-top:0.5rem; background: linear-gradient(135deg, #c026d3 0%, #7c3aed 100%);">
-              Explore <i class="fas fa-chevron-right" style="margin-left:0.5rem;"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="content-section">
-      <div class="glass-card-strong fade-up" style="padding:3rem 2rem; border-radius: var(--radius-xl); position:relative; overflow:hidden;">
-        <!-- Decorative glow -->
-        <div class="glow-ring purple" style="width:250px;height:250px;top:-80px;right:-60px;"></div>
-
-        <div class="relative z-10">
-          <div class="section-title" style="margin-bottom:2rem;">
-            <h2><span class="gradient-text">About My Work</span></h2>
-          </div>
-          <p class="text-secondary text-center" style="max-width:800px; margin:0 auto 2.5rem; font-size:1.1rem; line-height:1.75;">
-            This portfolio represents my journey through the fascinating world of digital animation and 3D rendering.
-            Each project showcases different aspects of multimedia creation, from traditional animation techniques
-            to cutting-edge 3D visualization.
+          <h1 class="hero-title">
+            <span class="gradient-text">Navasca</span>
+            <span class="hero-subtitle">Multimedia Artist</span>
+          </h1>
+          <p class="hero-description">
+            Crafting immersive digital experiences through animation, 3D rendering, and creative coding
           </p>
-          <div class="grid-3 stagger-children">
-            <div class="text-center">
-              <div class="info-icon">
-                <i class="fas fa-palette"></i>
-              </div>
-              <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">Creative Vision</h3>
-              <p class="text-muted" style="font-size:0.95rem;">Bringing artistic concepts to life through digital media</p>
+          <div class="hero-actions">
+            <a href="rotoscoping.html" class="btn-modern btn-primary">
+              <span>View Work</span>
+              <i class="fas fa-arrow-right"></i>
+            </a>
+            <a href="contact.html" class="btn-modern btn-outline">
+              <span>Contact</span>
+              <i class="fas fa-envelope"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-visual">
+          <div class="floating-elements">
+            <div class="float-element element-1">
+              <i class="fas fa-film"></i>
             </div>
-            <div class="text-center">
-              <div class="info-icon">
-                <i class="fas fa-cogs"></i>
-              </div>
-              <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">Technical Skills</h3>
-              <p class="text-muted" style="font-size:0.95rem;">Mastering industry-standard tools and techniques</p>
+            <div class="float-element element-2">
+              <i class="fas fa-rocket"></i>
             </div>
-            <div class="text-center">
-              <div class="info-icon">
-                <i class="fas fa-chart-line"></i>
-              </div>
-              <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">Continuous Growth</h3>
-              <p class="text-muted" style="font-size:0.95rem;">Evolving skills through practice and experimentation</p>
+            <div class="float-element element-3">
+              <i class="fas fa-palette"></i>
             </div>
+          </div>
+          <div class="hero-glow"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagonal Projects Section -->
+    <section class="diagonal-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="gradient-text">Featured Projects</span>
+        </h2>
+        <p class="section-subtitle">Explore my creative journey through digital media</p>
+      </div>
+      
+      <div class="projects-grid">
+        <!-- Project 1 - Large Card -->
+        <div class="project-card-large">
+          <div class="project-visual">
+            <div class="project-icon-large cyan-icon">
+              <i class="fas fa-film"></i>
+            </div>
+            <div class="project-pattern"></div>
+          </div>
+          <div class="project-content">
+            <div class="project-category">Animation</div>
+            <h3 class="project-title">Rotoscoping Journey</h3>
+            <p class="project-description">
+              Week-by-week progression showcasing the evolution from basic frame-by-frame animation to complex rotoscoping techniques
+            </p>
+            <div class="project-tech">
+              <span class="tech-tag">After Effects</span>
+              <span class="tech-tag">Frame Animation</span>
+              <span class="tech-tag">Digital Art</span>
+            </div>
+            <a href="rotoscoping.html" class="project-link">
+              <span>View Progress</span>
+              <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Project 2 - Vertical Card -->
+        <div class="project-card-vertical">
+          <div class="project-header">
+            <div class="project-icon-small magenta-icon">
+              <i class="fas fa-rocket"></i>
+            </div>
+            <div class="project-meta">
+              <span class="project-category">3D Animation</span>
+              <h3 class="project-title-small">Solar System</h3>
+            </div>
+          </div>
+          <p class="project-desc-small">
+            Scientifically accurate planetary motion with Blender and Python scripting
+          </p>
+          <div class="project-tech-small">
+            <span class="tech-tag-small">Blender</span>
+            <span class="tech-tag-small">Python</span>
+          </div>
+          <a href="solar-system.html" class="project-link-small">
+            <span>Explore</span>
+            <i class="fas fa-arrow-up-right"></i>
+          </a>
+        </div>
+
+        <!-- Skills Grid -->
+        <div class="skills-grid">
+          <div class="skill-card">
+            <div class="skill-icon">
+              <i class="fas fa-palette"></i>
+            </div>
+            <h4>Creative Vision</h4>
+            <p>Artistic concepts to digital reality</p>
+          </div>
+          <div class="skill-card">
+            <div class="skill-icon">
+              <i class="fas fa-code"></i>
+            </div>
+            <h4>Technical Skills</h4>
+            <p>Industry-standard tools mastery</p>
+          </div>
+          <div class="skill-card">
+            <div class="skill-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h4>Growth Mindset</h4>
+            <p>Continuous learning & experimentation</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Call to Action -->
-    <section class="content-section fade-up">
-      <div class="cta-glass">
-        <h2>Ready to Explore?</h2>
-        <p>Dive into my creative journey and see how each project builds upon the last.</p>
-        <div class="btn-group">
-          <a href="rotoscoping.html" class="btn-glow btn-glow-white">
-            <i class="fas fa-film"></i> Start with Rotoscoping
-          </a>
-          <a href="solar-system.html" class="btn-glow btn-glow-dark">
-            <i class="fas fa-rocket"></i> View Solar System
-          </a>
+    <!-- Stats Section -->
+    <section class="stats-section">
+      <div class="stats-container">
+        <div class="stat-item">
+          <div class="stat-number">13</div>
+          <div class="stat-label">Weeks of Progress</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">9</div>
+          <div class="stat-label">Planets Rendered</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100+</div>
+          <div class="stat-label">Hours of Animation</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">∞</div>
+          <div class="stat-label">Creative Possibilities</div>
         </div>
       </div>
     </section>
-  </main>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="cta-content">
+        <div class="cta-text">
+          <h2 class="cta-title">
+            <span class="gradient-text">Ready to Start Your Journey?</span>
+          </h2>
+          <p class="cta-description">
+            Dive deep into the world of digital animation and 3D rendering
+          </p>
+        </div>
+        <div class="cta-buttons">
+          <a href="rotoscoping.html" class="cta-btn primary">
+            <i class="fas fa-play"></i>
+            <span>Start with Rotoscoping</span>
+          </a>
+          <a href="solar-system.html" class="cta-btn secondary">
+            <i class="fas fa-rocket"></i>
+            <span>View Solar System</span>
+          </a>
+        </div>
+      </div>
+      <div class="cta-visual">
+        <div class="cta-particles"></div>
+      </div>
+    </section>
+  </div>
 
   <!-- Footer -->
   <footer class="footer-glass">
     <div class="footer-inner">
       <p>&copy; <span id="current-year"></span> Navasca, Sedriel H.</p>
       <div class="footer-socials">
-        <a href="https://github.com/AkiraJade" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
-        <a href="mailto:sedriel.navasca@example.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+        <a href="https://github.com/Raisins69" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="mailto:navascased@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
       </div>
     </div>
   </footer>
