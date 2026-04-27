@@ -162,6 +162,25 @@
     navToggle.addEventListener('click', () => {
       navLinks.classList.toggle('active');
     });
+
+    // Reveal animation on scroll
+    const revealElements = document.querySelectorAll('.reveal');
+    
+    const revealOnScroll = () => {
+      revealElements.forEach(el => {
+        const windowHeight = window.innerHeight;
+        const elementTop = el.getBoundingClientRect().top;
+        const revealPoint = 150;
+        
+        if (elementTop < windowHeight - revealPoint) {
+          el.classList.add('visible');
+        }
+      });
+    };
+    
+    // Initial check and scroll listener
+    revealOnScroll();
+    window.addEventListener('scroll', revealOnScroll);
   </script>
 </body>
 </html>
