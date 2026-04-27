@@ -7,45 +7,45 @@
 
 /* ---- CSS Custom Properties ---- */
 :root {
-  /* Cyberpunk Dark Palette */
-  --cyber-deepest: #0a0a0f;
-  --cyber-deep: #1a1a2e;
-  --cyber-dark: #16213e;
-  --cyber-base: #0f3460;
-  --cyber-mid: #1e3a5f;
-  --cyber-light: #2a4d7f;
-  --cyber-glow: #3d5a8c;
+  /* Light Mode Palette */
+  --cyber-deepest: #f8f9fa;
+  --cyber-deep: #e9ecef;
+  --cyber-dark: #dee2e6;
+  --cyber-base: #ffffff;
+  --cyber-mid: #f1f3f5;
+  --cyber-light: #ffffff;
+  --cyber-glow: #e9ecef;
 
-  /* Neon Accent Colors */
-  --cyan-neon: #00ffff;
-  --cyan-vivid: #00d4ff;
-  --cyan-soft: #7fffd4;
-  --cyan-faint: rgba(0, 255, 255, 0.15);
-  --magenta-deep: #ff006e;
-  --magenta-electric: #ff4081;
-  --yellow-glow: #ffbe0b;
-  --pink-accent: #fb5607;
-  --green-neon: #00ff88;
-  --purple-neon: #8b5cf6;
+  /* Light Theme Accent Colors */
+  --cyan-neon: #0066cc;
+  --cyan-vivid: #0052a3;
+  --cyan-soft: #cce7ff;
+  --cyan-faint: rgba(0, 102, 204, 0.1);
+  --magenta-deep: #e91e63;
+  --magenta-electric: #f06292;
+  --yellow-glow: #ff9800;
+  --pink-accent: #ff5722;
+  --green-neon: #4caf50;
+  --purple-neon: #9c27b0;
 
-  /* Cyberpunk Neutrals */
-  --text-primary: #e0e0e0;
-  --text-secondary: #a0a0a0;
-  --text-muted: #707070;
-  --border-glass: rgba(0, 255, 255, 0.18);
-  --border-neo: rgba(255, 0, 110, 0.12);
+  /* Light Theme Neutrals */
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --text-muted: #adb5bd;
+  --border-glass: rgba(0, 102, 204, 0.2);
+  --border-neo: rgba(233, 30, 99, 0.15);
 
   /* Glassmorphism Tokens */
-  --glass-bg: rgba(26, 26, 46, 0.55);
-  --glass-bg-strong: rgba(26, 26, 46, 0.75);
-  --glass-blur: 18px;
-  --glass-blur-heavy: 28px;
-  --glass-border: 1px solid rgba(0, 255, 255, 0.2);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-bg-strong: rgba(255, 255, 255, 0.9);
+  --glass-blur: 8px;
+  --glass-blur-heavy: 12px;
+  --glass-border: 1px solid rgba(0, 102, 204, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 
   /* Neomorphism Tokens */
-  --neo-shadow-light: rgba(0, 255, 255, 0.12);
-  --neo-shadow-dark: rgba(0, 0, 0, 0.7);
+  --neo-shadow-light: rgba(0, 102, 204, 0.1);
+  --neo-shadow-dark: rgba(0, 0, 0, 0.15);
   --neo-raised: 6px 6px 16px var(--neo-shadow-dark), -6px -6px 16px var(--neo-shadow-light);
   --neo-inset: inset 4px 4px 12px var(--neo-shadow-dark), inset -4px -4px 12px var(--neo-shadow-light);
   --neo-flat: 3px 3px 8px var(--neo-shadow-dark), -3px -3px 8px var(--neo-shadow-light);
@@ -76,7 +76,7 @@ html {
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--cyber-deepest);
+  background: var(--cyber-base);
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
@@ -84,17 +84,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Animated cyberpunk background mesh */
+/* Light theme background mesh */
 body::before {
   content: '';
   position: fixed;
-  inset: 0;
-  z-index: -2;
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0, 255, 255, 0.12) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 90%, rgba(255, 0, 110, 0.08) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255, 190, 11, 0.06) 0%, transparent 50%);
-  animation: bgPulse 12s ease-in-out infinite alternate;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(0, 102, 204, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(233, 30, 99, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(255, 152, 0, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 body::after {
@@ -103,12 +106,12 @@ body::after {
   inset: 0;
   z-index: -1;
   background-image:
-    radial-gradient(1px 1px at 15% 25%, rgba(0, 255, 255, 0.4), transparent),
-    radial-gradient(1px 1px at 45% 65%, rgba(255, 0, 110, 0.3), transparent),
-    radial-gradient(1px 1px at 75% 15%, rgba(255, 190, 11, 0.35), transparent),
-    radial-gradient(1px 1px at 85% 75%, rgba(127, 255, 212, 0.25), transparent),
-    radial-gradient(1px 1px at 35% 85%, rgba(0, 255, 136, 0.3), transparent),
-    radial-gradient(1px 1px at 60% 40%, rgba(139, 92, 246, 0.25), transparent);
+    radial-gradient(1px 1px at 15% 25%, rgba(0, 102, 204, 0.1), transparent),
+    radial-gradient(1px 1px at 45% 65%, rgba(233, 30, 99, 0.08), transparent),
+    radial-gradient(1px 1px at 75% 15%, rgba(255, 152, 0, 0.1), transparent),
+    radial-gradient(1px 1px at 85% 75%, rgba(127, 255, 212, 0.08), transparent),
+    radial-gradient(1px 1px at 35% 85%, rgba(0, 204, 136, 0.08), transparent),
+    radial-gradient(1px 1px at 60% 40%, rgba(139, 92, 246, 0.08), transparent);
   pointer-events: none;
 }
 
@@ -213,7 +216,7 @@ h1, h2, h3, h4 {
 
 /* ---- Neo Card ---- */
 .neo-card {
-  background: var(--cyber-dark);
+  background: var(--cyber-deep);
   border-radius: var(--radius-lg);
   box-shadow: var(--neo-raised);
   border: 1px solid var(--border-neo);
@@ -231,7 +234,7 @@ h1, h2, h3, h4 {
 
 /* Inset Neo */
 .neo-inset {
-  background: var(--cyber-dark);
+  background: var(--cyber-deep);
   border-radius: var(--radius-md);
   box-shadow: var(--neo-inset);
   border: 1px solid rgba(0, 255, 255, 0.08);
@@ -239,9 +242,9 @@ h1, h2, h3, h4 {
 
 /* ---- Navbar ---- */
 .nav-glass {
-  background: rgba(10, 10, 15, 0.8);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(0, 255, 255, 0.15);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
   position: sticky;
@@ -1372,7 +1375,7 @@ h1, h2, h3, h4 {
   grid-template-columns: 1fr 1fr;
   min-height: 100vh;
   position: relative;
-  background: var(--cyber-deepest);
+  background: var(--cyber-base);
 }
 
 .hero-left {
@@ -1386,7 +1389,7 @@ h1, h2, h3, h4 {
 
 .hero-right {
   position: relative;
-  background: linear-gradient(135deg, var(--cyber-dark) 0%, var(--cyber-base) 100%);
+  background: linear-gradient(135deg, var(--cyber-deep) 0%, var(--cyber-base) 100%);
   overflow: hidden;
 }
 
@@ -1893,7 +1896,7 @@ h1, h2, h3, h4 {
 /* ---- CTA Section ---- */
 .cta-section {
   padding: 6rem 3rem;
-  background: var(--cyber-deepest);
+  background: var(--cyber-base);
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
@@ -3021,7 +3024,7 @@ h1, h2, h3, h4 {
 /* ---- Download Section ---- */
 .download-section {
   padding: 6rem 3rem;
-  background: var(--cyber-deepest);
+  background: var(--cyber-base);
   position: relative;
 }
 
@@ -3354,7 +3357,7 @@ h1, h2, h3, h4 {
   position: absolute;
   inset: 4px;
   border-radius: 50%;
-  background: var(--cyber-dark);
+  background: var(--cyber-deep);
 }
 
 .profile-picture {
@@ -3965,8 +3968,212 @@ h1, h2, h3, h4 {
   }
 }
 
+/* ============================================================
+   WEEKLY VIDEOS SECTION STYLES
+   ============================================================ */
+
+/* ---- Weekly Videos Section ---- */
+.weekly-videos-section {
+  padding: 6rem 3rem;
+  background: var(--cyber-base);
+  position: relative;
+}
+
+.videos-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.videos-title {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.videos-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.weekly-videos-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+/* ---- Week Video Cards ---- */
+.week-video-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  flex-direction: column;
+}
+
+.week-video-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0, 255, 255, 0.2);
+  border-color: rgba(0, 255, 255, 0.4);
+}
+
+.week-video-header {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.week-number-small {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #000;
+  background: linear-gradient(135deg, var(--cyan-neon), var(--magenta-deep));
+  box-shadow: 0 4px 16px rgba(0, 255, 255, 0.3);
+  flex-shrink: 0;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.week-video-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* ---- Video Container ---- */
+.video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 0;
+}
+
+.week-video-desc {
+  padding: 1.5rem;
+  flex-grow: 1;
+}
+
+.week-video-desc p {
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ---- Week Video Card Variations ---- */
+.week-video-card:nth-child(1) .week-number-small {
+  background: linear-gradient(135deg, var(--cyan-neon), var(--cyan-deep));
+}
+
+.week-video-card:nth-child(2) .week-number-small {
+  background: linear-gradient(135deg, var(--magenta-deep), var(--magenta-electric));
+}
+
+.week-video-card:nth-child(3) .week-number-small {
+  background: linear-gradient(135deg, var(--yellow-neon), var(--magenta-deep));
+}
+
+.week-video-card:nth-child(4) .week-number-small {
+  background: linear-gradient(135deg, var(--cyan-neon), var(--yellow-neon));
+}
+
+.week-video-card:nth-child(5) .week-number-small {
+  background: linear-gradient(135deg, var(--magenta-electric), var(--cyan-deep));
+}
+
+.week-video-card:nth-child(6) .week-number-small {
+  background: linear-gradient(135deg, var(--yellow-neon), var(--cyan-neon));
+}
+
+.week-video-card:nth-child(7) .week-number-small {
+  background: linear-gradient(135deg, var(--cyan-deep), var(--magenta-deep));
+}
+
+.week-video-card:nth-child(8) .week-number-small {
+  background: linear-gradient(135deg, var(--magenta-electric), var(--yellow-neon));
+}
+
+.week-video-card:nth-child(9) .week-number-small {
+  background: linear-gradient(135deg, var(--cyan-neon), var(--magenta-deep));
+}
+
+.week-video-card:nth-child(10) .week-number-small {
+  background: linear-gradient(135deg, var(--yellow-neon), var(--cyan-deep));
+}
+
+.week-video-card:nth-child(11) .week-number-small {
+  background: linear-gradient(135deg, var(--magenta-deep), var(--cyan-neon));
+}
+
+.week-video-card:nth-child(12) .week-number-small {
+  background: linear-gradient(135deg, var(--yellow-neon), var(--magenta-electric));
+  box-shadow: 0 4px 16px rgba(255, 190, 11, 0.3);
+}
+
+/* ---- Responsive Design for Weekly Videos ---- */
+@media (max-width: 1024px) {
+  .weekly-videos-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .weekly-videos-section {
+    padding: 3rem 1.5rem;
+  }
+  
+  .weekly-videos-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .week-video-header {
+    padding: 1rem;
+  }
+  
+  .week-number-small {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+  
+  .week-video-title {
+    font-size: 1rem;
+  }
+  
+  .week-video-desc {
+    padding: 1rem;
+  }
+}
+
 /* ---- Scrollbar for Firefox ---- */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--cyan-neon) var(--cyber-deep);
+  scrollbar-color: var(--cyan-neon) var(--cyber-surface);
 }
