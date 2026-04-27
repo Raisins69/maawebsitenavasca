@@ -2389,8 +2389,7 @@ h1, h2, h3, h4 {
 /* ---- Process Grid ---- */
 .process-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-rows: auto auto;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 2rem;
   max-width: 1400px;
   margin: 0 auto;
@@ -2398,7 +2397,6 @@ h1, h2, h3, h4 {
 
 /* ---- Process Cards ---- */
 .process-card-large {
-  grid-row: span 2;
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   border: 1px solid rgba(0, 255, 255, 0.2);
