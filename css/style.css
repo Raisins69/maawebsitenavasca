@@ -1383,7 +1383,7 @@ h1, h2, h3, h4 {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 3rem;
-  align-items: center;
+  align-items: start;
 }
 
 /* ---- Hero Profile ---- */
@@ -1391,7 +1391,8 @@ h1, h2, h3, h4 {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .profile-header {
@@ -1478,7 +1479,8 @@ h1, h2, h3, h4 {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .hero-intro {
@@ -1583,8 +1585,9 @@ h1, h2, h3, h4 {
 .hero-actions {
   display: flex;
   gap: 1rem;
-  margin-top: 3rem;
+  margin-top: 2rem;
   flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 /* ---- Split Hero Section ---- */
