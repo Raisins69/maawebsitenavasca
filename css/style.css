@@ -4881,5 +4881,5 @@ main {
 /* ---- Scrollbar for Firefox ---- */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--cyan-neon) var(--cyber-surface);
+  scrollbar-color: var(--cyan-neon) var(--cyber-deep);
 }
