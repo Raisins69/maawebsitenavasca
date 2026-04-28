@@ -535,9 +535,18 @@
                 section.innerHTML = `
                     <div class="planet-card-modern">
                         <div class="planet-visual-modern">
+                            ${body.videoUrl ? `
+                            <div class="planet-video-container">
+                                <video controls class="planet-video" poster="images/${body.name.toLowerCase()}-poster.jpg">
+                                    <source src="${body.videoUrl}" type="${body.videoUrl.endsWith('.mp4') ? 'video/mp4' : 'video/x-matroska'}">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            ` : `
                             <div class="planet-icon-large ${body.iconClass}">
                                 ${body.icon}
                             </div>
+                            `}
                             <div class="planet-glow"></div>
                         </div>
                         <div class="planet-content-modern">
