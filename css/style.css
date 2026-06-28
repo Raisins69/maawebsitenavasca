@@ -6568,3 +6568,46 @@ main {
     font-size: 1.2rem;
   }
 }
+
+/* ============================================================
+   HERO VIDEO STYLES
+   ============================================================ */
+
+.hero-video-container {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+  background: var(--bg);
+}
+
+.hero-video::-webkit-media-controls-panel {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.hero-video::-webkit-media-controls-play-button,
+.hero-video::-webkit-media-controls-fullscreen-button {
+  background-color: var(--accent);
+  border-radius: 50%;
+}
+
+@media (max-width: 1024px) {
+  .hero-video-container {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-video-container {
+    min-height: 200px;
+  }
+}
