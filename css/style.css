@@ -6611,3 +6611,125 @@ main {
     min-height: 200px;
   }
 }
+
+/* ============================================================
+   ROTOSCOPY COMPARISON STYLES
+   ============================================================ */
+
+.roto-comparison-unique {
+  padding: 6rem 3rem;
+  background: var(--bg);
+  position: relative;
+}
+
+.roto-comparison-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.roto-comparison-content .roto-eyebrow {
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.roto-comparison-content h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.roto-comparison-content p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+}
+
+.roto-comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.roto-comparison-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.roto-comparison-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.roto-comparison-video {
+  aspect-ratio: 16/9;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15);
+  border: 2px solid var(--border);
+}
+
+.roto-comparison-video iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.roto-comparison-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #fff;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@media (max-width: 1024px) {
+  .roto-comparison-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 2rem;
+  }
+
+  .roto-comparison-divider {
+    width: 50px;
+    height: 50px;
+    transform: rotate(90deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .roto-comparison-unique {
+    padding: 3rem 1.5rem;
+  }
+
+  .roto-comparison-video {
+    aspect-ratio: 16/9;
+    min-height: 200px;
+  }
+
+  .roto-comparison-label {
+    font-size: 0.9rem;
+  }
+}
