@@ -6613,6 +6613,105 @@ main {
 }
 
 /* ============================================================
+   CODE SECTION STYLES
+   ============================================================ */
+
+.code-section {
+  padding: 6rem 3rem;
+  background: var(--bg);
+  position: relative;
+}
+
+.code-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.code-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.code-subtitle {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.code-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15);
+}
+
+.code-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  border-bottom: 1px solid var(--border);
+}
+
+.code-language {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.copy-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.code-block {
+  margin: 0;
+  padding: 2rem;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+@media (max-width: 600px) {
+  .code-section {
+    padding: 3rem 1.5rem;
+  }
+
+  .code-block {
+    padding: 1rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* ============================================================
    ROTOSCOPY COMPARISON STYLES
    ============================================================ */
 

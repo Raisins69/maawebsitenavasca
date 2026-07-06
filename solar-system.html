@@ -234,6 +234,831 @@
                 </div>
             </div>
         </section>
+
+        <!-- Python Script Section -->
+        <section class="code-section">
+            <div class="code-header">
+                <h2 class="code-title">
+                    <span class="gradient-text">Blender Python Script</span>
+                </h2>
+                <p class="code-subtitle">The Python script used to generate the solar system animation in Blender</p>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header-bar">
+                    <div class="code-language">
+                        <i class="fab fa-python"></i>
+                        <span>Python</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyCode()">
+                        <i class="fas fa-copy"></i>
+                        <span>Copy Code</span>
+                    </button>
+                </div>
+                <pre class="code-block"><code id="pythonCode">"""
+Solar System — Blender 5.1
+- Sun radius 75u (bigger than Jupiter at ~54.87u)
+- All planet orbits pushed clear of the Sun surface
+- Planets orbit via pivot empties (keyframed Z rotation)
+- Moon orbits Earth
+- Earth = 5u reference; all planet sizes accurate relative to each other
+- Texture support: set TEXTURE_DIR below to your textures folder
+"""
+
+# ┌─────────────────────────────────────────────────────────┐
+# │  SET THIS to the folder where you saved your textures   │
+# │  Download free textures from:                           │
+# │  https://www.solarsystemscope.com/textures/             │
+# │                                                         │
+# │  Expected filenames:                                    │
+# │  sun.jpg  mercury.jpg  venus.jpg  earth.jpg  mars.jpg   │
+# │  jupiter.jpg  saturn.jpg  uranus.jpg  neptune.jpg       │
+# │  pluto.jpg  moon.jpg  saturn_ring.png                   │
+# └─────────────────────────────────────────────────────────┘
+TEXTURE_DIR = "C:/Users/Sedriel Navasca/Desktop/solar_textures/"
+
+import bpy
+import mathutils
+import math
+
+# ─── Helpers ──────────────────────────────────────────────────────────────────
+
+def clear_scene():
+    bpy.ops.object.select_all(action='SELECT')
+    bpy.ops.object.delete(use_global=False)
+    for d in (bpy.data.meshes, bpy.data.materials, bpy.data.curves):
+        for block in list(d):
+            try: d.remove(block)
+            except: pass
+
+
+def make_material(name, color, emission=0.0, tex_file=None):
+    """
+    Create a material. If tex_file is given and exists, use it as the
+    base color texture. Otherwise fall back to the plain color.
+    """
+    import os
+    mat = bpy.data.materials.new(name=name)
+    mat.use_nodes = True
+    nodes = mat.node_tree.nodes
+    links = mat.node_tree.links
+    nodes.clear()
+
+    out  = nodes.new("ShaderNodeOutputMaterial")
+    out.location = (600, 0)
+
+    tex_path = os.path.join(TEXTURE_DIR, tex_file) if tex_file else None
+    has_tex  = tex_path and os.path.isfile(tex_path)
+
+    if emission > 0:
+        n = nodes.new("ShaderNodeEmission")
+        n.location = (400, 0)
+        if has_tex:
+            img  = bpy.data.images.load(tex_path)
+            tex  = nodes.new("ShaderNodeTexImage")
+            tex.image = img
+            tex.location = (0, 0)
+            links.new(tex.outputs["Color"], n.inputs["Color"])
+        else:
+            n.inputs["Color"].default_value = (*color, 1.0)
+        n.inputs["Strength"].default_value = emission
+        links.new(n.outputs["Emission"], out.inputs["Surface"])
+    else:
+        bsdf = nodes.new("ShaderNodeBsdfPrincipled")
+        bsdf.location = (400, 0)
+        if has_tex:
+            img  = bpy.data.images.load(tex_path)
+            tex  = nodes.new("ShaderNodeTexImage")
+            tex.image = img
+            tex.location = (0, 0)
+            links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
+        else:
+            bsdf.inputs["Base Color"].default_value = (*color, 1.0)
+        bsdf.inputs["Roughness"].default_value = 0.6
+        links.new(bsdf.outputs["BSDF"], out.inputs["Surface"])
+
+    return mat
+
+
+def add_sphere(name, radius, loc, mat):
+    bpy.ops.mesh.primitive_uv_sphere_add(
+        radius=radius, location=loc, segments=64, ring_count=32)
+    obj = bpy.context.active_object
+    obj.name = name
+    obj.data.materials.clear()
+    obj.data.materials.append(mat)
+    bpy.ops.object.shade_smooth()
+    return obj
+
+
+def add_cloud_layer(name, parent_obj, planet_radius, cloud_tex_file,
+                     scale_factor=1.01, alpha_strength=1.0):
+    """
+    Add a slightly larger transparent sphere shell above a planet to act
+    as a cloud/atmosphere layer. Uses the image's color channel as both
+    the visible color AND the alpha mask (works well for grayscale cloud
+    maps where white=cloud, black=clear sky).
+    """
+    import os
+    tex_path = os.path.join(TEXTURE_DIR, cloud_tex_file)
+    if not os.path.isfile(tex_path):
+        print(f"  ⚠️ Cloud texture not found, skipping: {tex_path}")
+        return None
+
+    cloud_r = planet_radius * scale_factor
+    bpy.ops.mesh.primitive_uv_sphere_add(
+        radius=cloud_r, location=(0, 0, 0), segments=64, ring_count=32)
+    cloud = bpy.context.active_object
+    cloud.name = f"{name}_Clouds"
+
+    mat = bpy.data.materials.new(name=f"{name}_CloudMat")
+    mat.use_nodes = True
+    mat.blend_method = 'BLEND'     # enable transparency in Eevee viewport
+    nodes = mat.node_tree.nodes
+    links = mat.node_tree.links
+    nodes.clear()
+
+    out  = nodes.new("ShaderNodeOutputMaterial")
+    out.location = (600, 0)
+
+    bsdf = nodes.new("ShaderNodeBsdfPrincipled")
+    bsdf.location = (300, 0)
+    bsdf.inputs["Roughness"].default_value = 0.9
+
+    img = bpy.data.images.load(tex_path)
+    tex = nodes.new("ShaderNodeTexImage")
+    tex.image = img
+    tex.location = (0, 100)
+
+    # Use the cloud map's brightness as transparency: bright clouds show,
+    # dark/clear areas become see-through so the planet surface shows below
+    links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
+
+    ramp = nodes.new("ShaderNodeMath")
+    ramp.operation = 'MULTIPLY'
+    ramp.location = (0, -150)
+    ramp.inputs[1].default_value = alpha_strength
+    links.new(tex.outputs["Color"], ramp.inputs[0])
+    links.new(ramp.outputs["Value"], bsdf.inputs["Alpha"])
+
+    links.new(bsdf.outputs["BSDF"], out.inputs["Surface"])
+
+    cloud.data.materials.clear()
+    cloud.data.materials.append(mat)
+    bpy.ops.object.shade_smooth()
+
+    cloud.parent = parent_obj
+    print(f"  ✅ Cloud/atmosphere layer added to {name}: {cloud_tex_file}")
+    return cloud
+
+
+def add_orbit_circle(name, dist):
+    bpy.ops.curve.primitive_bezier_circle_add(radius=dist, location=(0, 0, 0))
+    obj = bpy.context.active_object
+    obj.name = f"{name}_OrbitCircle"
+    obj.data.bevel_depth = 0.2
+    obj.data.resolution_u = 128
+    m = make_material(f"{name}_OrbitMat", (0.15, 0.15, 0.15))
+    obj.data.materials.clear()
+    obj.data.materials.append(m)
+
+
+def add_saturn_rings(loc, planet_r, parent):
+    m = make_material("SaturnRings", (0.76, 0.70, 0.50), tex_file="saturn_ring.png")
+    inner = planet_r * 1.25
+    outer = planet_r * 2.20
+    bpy.ops.mesh.primitive_torus_add(
+        location=loc,
+        major_radius=(inner + outer) / 2,
+        minor_radius=(outer - inner) / 2,
+        major_segments=80,
+        minor_segments=12
+    )
+    r = bpy.context.active_object
+    r.name = "Saturn_Rings"
+    r.scale.z = 0.04
+    r.data.materials.clear()
+    r.data.materials.append(m)
+    bpy.ops.object.shade_smooth()
+    r.parent = parent
+
+
+def make_pivot(name):
+    bpy.ops.object.empty_add(type='PLAIN_AXES', location=(0, 0, 0))
+    empty = bpy.context.active_object
+    empty.name = f"{name}_Pivot"
+    return empty
+
+
+def set_rotation_anim(obj, period_frames, total_frames):
+    obj.rotation_euler = (0, 0, 0)
+    obj.keyframe_insert(data_path="rotation_euler", frame=1)
+    turns = total_frames / period_frames
+    obj.rotation_euler = (0, 0, math.radians(360) * turns)
+    obj.keyframe_insert(data_path="rotation_euler", frame=total_frames)
+
+    # Set all keyframes to LINEAR interpolation — Blender 5.x compatible
+    action = obj.animation_data.action if obj.animation_data else None
+    if not action:
+        return
+    try:
+        # Blender 5.x: ActionKeyframeStrip has channel_groups -> fcurves
+        for layer in action.layers:
+            for strip in layer.strips:
+                # Try channel_groups (Blender 5.x)
+                try:
+                    for grp in strip.channelbags:
+                        for fc in grp.fcurves:
+                            for kp in fc.keyframe_points:
+                                kp.interpolation = 'LINEAR'
+                except AttributeError:
+                    pass
+    except AttributeError:
+        pass
+    # Also try legacy path (Blender 4.x and below)
+    try:
+        for fc in action.fcurves:
+            for kp in fc.keyframe_points:
+                kp.interpolation = 'LINEAR'
+    except AttributeError:
+        pass
+
+
+def add_nametag(name, obj, offset_z, font_size=3.0):
+    """
+    Create a 3D text label above an object, with a 'Track To' constraint
+    so it always faces the camera (billboard behavior).
+    """
+    bpy.ops.object.text_add(location=(0, 0, offset_z))
+    tag = bpy.context.active_object
+    tag.name = f"{name}_Tag"
+    tag.data.body = name
+    tag.data.size = font_size
+    tag.data.align_x = 'CENTER'
+    tag.data.align_y = 'BOTTOM'
+    tag.parent = obj
+
+    # Unlit white material so the tag is always readable
+    tag_mat = make_material(f"{name}_TagMat", (1.0, 1.0, 1.0), emission=3.0)
+    tag.data.materials.clear()
+    tag.data.materials.append(tag_mat)
+
+    # Track-To constraint: always rotates to face the active camera
+    constraint = tag.constraints.new(type='TRACK_TO')
+    constraint.target = bpy.context.scene.camera  # set after camera exists; patched below
+    constraint.track_axis = 'TRACK_Z'
+    constraint.up_axis = 'UP_Y'
+
+    return tag
+
+
+def add_asteroid_belt(inner_r, outer_r, count=150, seed=42):
+    """
+    Scatter small rocky spheres in a ring between Mars and Jupiter.
+    Adds two visible guide circles (inner + outer edge of the belt) so
+    the belt zone is clearly readable in the viewport, plus a center
+    marker empty (used as the camera-tour / nametag anchor for the belt).
+    """
+    import random
+    random.seed(seed)
+
+    belt_parent = bpy.data.objects.new("AsteroidBelt", None)
+    bpy.context.collection.objects.link(belt_parent)
+
+    ast_mat = make_material("AsteroidMat", (0.35, 0.32, 0.28))
+
+    for i in range(count):
+        angle = random.uniform(0, math.tau)
+        dist  = random.uniform(inner_r, outer_r)
+        x = dist * math.cos(angle)
+        y = dist * math.sin(angle)
+        z = random.uniform(-15, 15)   # slight vertical scatter
+
+        radius = random.uniform(0.3, 1.2)
+
+        bpy.ops.mesh.primitive_ico_sphere_add(
+            radius=radius, location=(x, y, z), subdivisions=1)
+        rock = bpy.context.active_object
+        rock.name = f"Asteroid_{i:03d}"
+        rock.data.materials.clear()
+        rock.data.materials.append(ast_mat)
+
+        # Slight random non-uniform scale for irregular rock look
+        rock.scale = (
+            random.uniform(0.7, 1.3),
+            random.uniform(0.7, 1.3),
+            random.uniform(0.7, 1.3),
+        )
+        rock.parent = belt_parent
+
+    # ── Center marker empty — sits at the belt's mid-radius, used as the
+    #    nametag anchor and camera-tour target ─────────────────────────
+    mid_r = (inner_r + outer_r) / 2
+    bpy.ops.object.empty_add(type='PLAIN_AXES', location=(mid_r, 0, 0))
+    belt_marker = bpy.context.active_object
+    belt_marker.name = "AsteroidBelt_Marker"
+    belt_marker.parent = belt_parent
+    belt_marker.empty_display_size = 5.0
+
+    # ── Revolution: rotate the entire belt (rocks + guide rings + marker,
+    #    all parented to belt_parent) slowly around the Sun, just like
+    #    the planets. Speed matches the same ORBIT_SLOWDOWN scale used
+    #    elsewhere so it's consistent with how fast Mars/Jupiter move.
+    belt_period = round(200 * ORBIT_SLOWDOWN)   # roughly between Mars and Jupiter's pace
+    set_rotation_anim(belt_parent, belt_period, TOTAL_FRAMES)
+
+    print(f"  Asteroid belt: {count} rocks between r={inner_r}-{outer_r}u (guide rings added)")
+    print(f"  Asteroid belt revolution period: {belt_period} frames")
+    return belt_parent, belt_marker
+
+
+def add_satellite(earth_obj, earth_pivot):
+    """
+    Small satellite orbiting Earth, closer and faster than the Moon.
+    """
+    sat_pivot = make_pivot("Satellite")
+    sat_pivot.parent = earth_pivot
+    sat_pivot.location = earth_obj.location  # same local offset as Earth
+    set_rotation_anim(sat_pivot, period_frames=round(6 * 16.67), total_frames=TOTAL_FRAMES)  # slowed to match ORBIT_SLOWDOWN
+
+    # Satellite body — small box (more satellite-like than a sphere)
+    sat_dist = EARTH_R * 1.8   # close orbit, between Earth surface and Moon
+    bpy.ops.mesh.primitive_cube_add(size=0.4, location=(sat_dist, 0, 0))
+    sat = bpy.context.active_object
+    sat.name = "Satellite"
+    sat.scale = (1.0, 0.4, 0.4)
+
+    sat_mat = make_material("SatelliteMat", (0.75, 0.75, 0.78))
+    sat.data.materials.clear()
+    sat.data.materials.append(sat_mat)
+
+    # Solar panel wings
+    bpy.ops.mesh.primitive_plane_add(size=1.2, location=(sat_dist, 0, 0))
+    panel = bpy.context.active_object
+    panel.name = "Satellite_Panels"
+    panel.scale = (0.15, 1.4, 1.0)
+    panel.rotation_euler = (0, math.radians(90), 0)
+    panel_mat = make_material("PanelMat", (0.05, 0.05, 0.25))
+    panel.data.materials.clear()
+    panel.data.materials.append(panel_mat)
+    panel.parent = sat_pivot
+
+    sat.parent = sat_pivot
+    return sat, sat_pivot
+
+
+def setup_camera_tour(camera, stops, frames_per_stop=80, hold_frames=40):
+    """
+    Animate the camera to sequentially visit each stop, FOLLOWING the
+    target's actual animated motion (its real revolution around the Sun)
+    while staying locked at a FIXED WORLD-SPACE angle/distance — like a
+    camera rigidly mounted next to the planet, riding alongside it.
+    No orbital sweep; the camera does not rotate around the target.
+
+    Implementation note: we do NOT parent any helper Empty to the
+    planet's orbit pivot, because the pivot's own rotation (that's what
+    drives the planet's orbit) would also rotate anything parented to
+    it — including a "fixed" local offset — making the camera appear to
+    swing around the target even though we only wanted it to follow
+    position, not rotation. Instead, the actual baking step below reads
+    the target's true WORLD position at each sampled frame directly via
+    the depsgraph, and adds a constant WORLD-SPACE offset vector to it.
+    Since the offset never changes and is never parented to anything
+    that rotates, the camera rides alongside the planet with a fixed
+    viewing angle the entire time.
+
+    stops: list of (name, target_obj, target_pivot, view_distance) tuples.
+           (target_pivot is no longer used for parenting, kept in the
+           tuple for API compatibility / potential future use.)
+    """
+    scene = bpy.context.scene
+    frame = 1
+
+    # Fixed WORLD-SPACE offset direction (same for every stop) — only the
+    # distance changes per stop based on the planet's size. Because this
+    # is applied directly in world space during baking (not via parenting),
+    # it never rotates with the orbit.
+    OFFSET_DIR = mathutils.Vector((0.6, -0.9, 0.5)).normalized()
+
+    stop_offsets = []   # (name, target_obj, distance) — passed to bake step
+    for i, (name, target_obj, target_pivot, distance) in enumerate(stops):
+        hold_end = frame + hold_frames
+        print(f"  Camera stop {i+1}/{len(stops)}: {name} @ frame {frame}-{hold_end} "
+              f"(following revolution, fixed world-space angle)")
+        stop_offsets.append((name, target_obj, distance))
+        frame = hold_end + frames_per_stop
+
+    _bake_camera_to_targets(camera, stop_offsets, frames_per_stop, hold_frames, OFFSET_DIR)
+
+    return frame
+
+
+def _bake_camera_to_targets(camera, stop_offsets, frames_per_stop, hold_frames,
+                              offset_dir, sample_every=5):
+    """
+    For each stop's hold period, sample the TARGET's true WORLD position
+    every `sample_every` frames (via depsgraph evaluation, so its real
+    orbital motion is correctly accounted for), then place the camera at
+    target_world_pos + (offset_dir * distance) — a constant WORLD-SPACE
+    offset that never rotates with anything. The camera always looks at
+    the target. Because the offset is computed fresh in world space at
+    every sample (not inherited through a rotating parent), the camera
+    rides alongside the planet's revolution with a fixed viewing angle —
+    no swinging/rotating around the target.
+
+    stop_offsets: list of (name, target_obj, distance) tuples.
+    """
+    scene = bpy.context.scene
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    frame = 1
+
+    # Quaternion rotation avoids Euler gimbal-flip jitter: independently
+    # computed Euler angles per keyframe can land on different (but
+    # equivalent) solutions frame-to-frame — e.g. 359° vs -1° — which
+    # interpolate as a near-360° spin instead of a 2° nudge. Quaternions
+    # don't have this ambiguity.
+    camera.rotation_mode = 'QUATERNION'
+
+    for name, target_obj, distance in stop_offsets:
+        hold_end = frame + hold_frames
+        sample_frames = list(range(frame, hold_end + 1, sample_every))
+        if sample_frames[-1] != hold_end:
+            sample_frames.append(hold_end)
+
+        for this_frame in sample_frames:
+            scene.frame_set(this_frame)
+            depsgraph.update()
+
+            target_eval = target_obj.evaluated_get(depsgraph)
+            target_world_loc = target_eval.matrix_world.translation.copy()
+
+            # Pure world-space offset — never parented, never rotates
+            cam_world_loc = target_world_loc + (offset_dir * distance)
+
+            direction = (target_world_loc - cam_world_loc)
+            if direction.length < 0.0001:
+                direction = mathutils.Vector((0, -1, 0))
+            direction.normalize()
+
+            camera.location = cam_world_loc
+            camera.rotation_quaternion = direction.to_track_quat('-Z', 'Y')
+
+            camera.keyframe_insert(data_path="location", frame=this_frame)
+            camera.keyframe_insert(data_path="rotation_quaternion", frame=this_frame)
+
+        frame = hold_end + frames_per_stop
+
+    scene.frame_set(1)  # reset playhead
+
+    # LOCATION: LINEAR for predictable, constant-speed travel.
+    # ROTATION (quaternion): smooth BEZIER — rotation changes benefit from
+    # gentle easing between samples, since even tiny per-frame differences
+    # in the look-at direction (floating point noise) get smoothed out
+    # instead of being interpolated as sharp linear snaps (= visible jitter).
+    if camera.animation_data and camera.animation_data.action:
+        action = camera.animation_data.action
+
+        def _apply_interpolation(fc):
+            is_rotation = fc.data_path == "rotation_quaternion"
+            for kp in fc.keyframe_points:
+                kp.interpolation = 'BEZIER' if is_rotation else 'LINEAR'
+                if is_rotation:
+                    kp.handle_left_type  = 'AUTO_CLAMPED'
+                    kp.handle_right_type = 'AUTO_CLAMPED'
+
+        try:
+            for layer in action.layers:
+                for strip in layer.strips:
+                    for grp in strip.channelbags:
+                        for fc in grp.fcurves:
+                            _apply_interpolation(fc)
+        except AttributeError:
+            try:
+                for fc in action.fcurves:
+                    _apply_interpolation(fc)
+            except AttributeError:
+                pass
+
+    return frame  # final frame used, so caller can extend scene.frame_end
+
+
+# ─── Data ─────────────────────────────────────────────────────────────────────
+
+EARTH_R    = 5.0
+KM2U       = EARTH_R / 6_371.0
+
+SUN_DISPLAY_R = 75.0      # > Jupiter (54.87u) ✓
+
+MOON_R          = 1_737.4 * KM2U   # ~1.364 u
+MOON_ORBIT_DIST = EARTH_R * 6      # ~30 u from Earth center
+MOON_PERIOD     = round(27 * 16.67)   # frames (slowed to match ORBIT_SLOWDOWN)
+
+# TOTAL_FRAMES is computed dynamically inside build() from the camera
+# tour length, so orbits keep spinning for the ENTIRE render, including
+# all camera stops (Sun + 8 planets + Moon + Satellite + Asteroid Belt).
+# See CAM_FRAMES_PER_STOP and CAM_HOLD_FRAMES below — change those to
+# retime the whole animation.
+CAM_FRAMES_PER_STOP = 60   # transition frames between stops
+CAM_HOLD_FRAMES      = 50   # how long the camera holds on each stop
+TOUR_STOP_COUNT       = 1 + len(  # Sun
+    [("Mercury",), ("Venus",), ("Earth",), ("Moon",), ("Satellite",),
+     ("Mars",), ("Asteroid Belt",), ("Jupiter",), ("Saturn",),
+     ("Uranus",), ("Neptune",), ("Pluto",)]
+)  # = 13 stops total (Sun, Mercury..Pluto, + Moon/Satellite after Earth,
+   #   + Asteroid Belt after Mars)
+
+TOTAL_FRAMES = TOUR_STOP_COUNT * (CAM_FRAMES_PER_STOP + CAM_HOLD_FRAMES) + 60
+# ^ +60 frame buffer so the orbit animation's last keyframe lands safely
+#   past the camera tour's final hold frame (avoids any rounding edge-case)
+
+# (name, real_radius_km, orbit_dist_u, period_frames, color, texture_filename)
+#
+# Orbit periods are slowed ~16.7x vs the original quick-spin values, so
+# the camera tour's hold period (CAM_HOLD_FRAMES) can smoothly track each
+# object's motion instead of it completing multiple full revolutions
+# before the camera even finishes a few samples (which looked erratic,
+# especially for fast inner objects like Mercury, Moon, and Satellite).
+ORBIT_SLOWDOWN = 16.67
+BODIES = [
+    ("Mercury",  2_439.7,   225,  round(25  * ORBIT_SLOWDOWN),  (0.60, 0.57, 0.55), "mercury.jpg"),
+    ("Venus",    6_051.8,   320,  round(60  * ORBIT_SLOWDOWN),  (0.90, 0.75, 0.45), "venus.jpg"),
+    ("Earth",    6_371.0,   430,  round(100 * ORBIT_SLOWDOWN),  (0.20, 0.45, 0.80), "earth.jpg"),
+    ("Mars",     3_389.5,   540,  round(160 * ORBIT_SLOWDOWN),  (0.75, 0.30, 0.18), "mars.jpg"),
+    ("Jupiter", 69_911.0,   780,  round(240 * ORBIT_SLOWDOWN),  (0.78, 0.65, 0.50), "jupiter.jpg"),
+    ("Saturn",  58_232.0,  1050,  round(340 * ORBIT_SLOWDOWN),  (0.88, 0.80, 0.55), "saturn.jpg"),
+    ("Uranus",  25_362.0,  1320,  round(440 * ORBIT_SLOWDOWN),  (0.55, 0.82, 0.88), "uranus.jpg"),
+    ("Neptune", 24_622.0,  1580,  round(560 * ORBIT_SLOWDOWN),  (0.22, 0.40, 0.82), "neptune.jpg"),
+    # Pluto — dwarf planet, smaller than the Moon (real radius 1,188.3 km).
+    # Placed beyond Neptune, continuing the same distance/period pattern.
+    ("Pluto",    1_188.3,  1850,  round(680 * ORBIT_SLOWDOWN),  (0.55, 0.50, 0.45), "pluto.jpg"),
+]
+
+
+# ─── Build ────────────────────────────────────────────────────────────────────
+
+def build():
+    clear_scene()
+
+    scene = bpy.context.scene
+    scene.frame_start = 1
+    scene.frame_end   = TOTAL_FRAMES
+
+    # ─── Sun: the mesh itself IS the light source ───────────────────────────
+    # In Cycles, an emission-shader mesh genuinely lights the scene (true
+    # area light behavior). We boost emission strength so it reaches the
+    # outer planets, and switch render engine to Cycles where this works
+    # most reliably.
+    SUN_EMISSION_STRENGTH = 200.0   # higher = more light cast on other objects
+
+    sun_mat = make_material("Sun", (1.0, 0.85, 0.20),
+                             emission=SUN_EMISSION_STRENGTH, tex_file="sun.jpg")
+    sun_obj = add_sphere("Sun", SUN_DISPLAY_R, (0, 0, 0), sun_mat)
+    add_nametag("Sun", sun_obj, offset_z=SUN_DISPLAY_R * 1.3, font_size=12.0)
+
+    # Switch to Cycles so the Sun mesh's emission actually illuminates
+    # everything (Eevee Next also supports this, but Cycles is most reliable
+    # for true emissive-mesh lighting with accurate falloff).
+    scene.render.engine = 'CYCLES'
+    scene.cycles.samples = 128              # final render samples
+    scene.cycles.use_denoising = True
+
+    # Viewport (Rendered shading mode) uses SEPARATE sample settings —
+    # this is why the viewport looks grainy/pixelated even with samples=128
+    # above (that only affects F12 final renders, not the live viewport).
+    scene.cycles.preview_samples = 64        # viewport samples (was likely ~10-32 default)
+    scene.cycles.use_preview_denoising = True
+    scene.cycles.preview_denoiser = 'OPTIX'  # use 'OPENIMAGEDENOISE' if no NVIDIA GPU
+
+    # ─── Output settings: render as an MP4 video ────────────────────────────
+    # Change OUTPUT_DIR below if you want the video saved somewhere else.
+    OUTPUT_DIR = TEXTURE_DIR.rstrip("/").rsplit("/", 1)[0] + "/solar_system_render/"
+    import os
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    scene.render.resolution_x = 1920
+    scene.render.resolution_y = 1080
+    scene.render.fps = 30
+
+    scene.render.image_settings.file_format = 'FFMPEG'
+    scene.render.ffmpeg.format = 'MPEG4'
+    scene.render.ffmpeg.codec = 'H264'
+    scene.render.ffmpeg.constant_rate_factor = 'MEDIUM'
+    scene.render.filepath = os.path.join(OUTPUT_DIR, "solar_system_tour.mp4")
+
+    print(f"  🎬 Render output set to: {scene.render.filepath}")
+    print(f"     Press Ctrl+F12 to render the full animation as MP4.")
+
+    # Optional hidden helper light — kept at very low strength, mainly a
+    # safety net in case Cycles renders the far planets too dark. Set its
+    # energy to 0 if you want the Sun mesh to be the ONLY light source.
+    bpy.ops.object.light_add(type='POINT', location=(0, 0, 0))
+    light = bpy.context.active_object
+    light.name = "SunLight_Helper"
+    light.data.energy = 0   # OFF by default — Sun mesh is the real source
+    light.data.shadow_soft_size = SUN_DISPLAY_R
+
+    earth_pivot = None
+    earth_dist  = None
+    earth_obj   = None
+    planet_objs = {}   # name -> mesh object, for camera tour + satellite
+    planet_pivots = {}  # name -> pivot empty, so camera can follow real orbital motion
+
+    for name, real_km, dist, period, color, tex in BODIES:
+        radius = real_km * KM2U
+        mat    = make_material(name, color, tex_file=tex)
+
+        pivot = make_pivot(name)
+        set_rotation_anim(pivot, period, TOTAL_FRAMES)
+
+        planet = add_sphere(name, radius, (dist, 0, 0), mat)
+        planet.parent = pivot
+        planet_objs[name] = planet
+        planet_pivots[name] = pivot
+
+        # Nametag scales with planet size so small planets still get readable tags
+        tag_size = max(radius * 0.9, 2.0)
+        add_nametag(name, planet, offset_z=radius * 1.6, font_size=tag_size)
+
+        if name == "Saturn":
+            add_saturn_rings((dist, 0, 0), radius, pivot)
+
+        if name == "Earth":
+            earth_pivot = pivot
+            earth_dist  = dist
+            earth_obj   = planet
+            add_cloud_layer("Earth", planet, radius, "earth_clouds.jpg",
+                             scale_factor=1.01, alpha_strength=1.0)
+
+        if name == "Venus":
+            add_cloud_layer("Venus", planet, radius, "venus_atmosphere.jpg",
+                             scale_factor=1.015, alpha_strength=0.8)
+
+        print(f"  {name:10s}  r={radius:.3f}u  dist={dist}u  clearance={dist-SUN_DISPLAY_R:.0f}u")
+
+    # Moon
+    moon_obj   = None
+    moon_pivot = None
+    if earth_pivot and earth_dist:
+        moon_pivot = make_pivot("Moon")
+        moon_pivot.location = (earth_dist, 0, 0)
+        moon_pivot.parent   = earth_pivot
+        set_rotation_anim(moon_pivot, MOON_PERIOD, TOTAL_FRAMES)
+
+        moon_mat = make_material("Moon", (0.65, 0.63, 0.60), tex_file="moon.jpg")
+        # Moon offset is ONLY MOON_ORBIT_DIST — earth_dist already handled by parent pivot
+        moon_obj = add_sphere("Moon", MOON_R, (MOON_ORBIT_DIST, 0, 0), moon_mat)
+        moon_obj.parent = moon_pivot
+        add_nametag("Moon", moon_obj, offset_z=MOON_R * 1.8, font_size=2.0)
+        print(f"  {'Moon':10s}  r={MOON_R:.3f}u  orbit={MOON_ORBIT_DIST}u from Earth")
+
+    # Satellite orbiting Earth
+    satellite_obj   = None
+    satellite_pivot = None
+    if earth_pivot and earth_obj:
+        satellite_obj, satellite_pivot = add_satellite(earth_obj, earth_pivot)
+        add_nametag("Satellite", satellite_obj, offset_z=1.5, font_size=1.5)
+        print(f"  {'Satellite':10s}  orbiting Earth at {EARTH_R*1.8:.2f}u")
+
+    # Asteroid belt — between Mars (540u) and Jupiter (780u)
+    mars_dist    = next(d for n, _, d, _, _, _ in BODIES if n == "Mars")
+    jupiter_dist = next(d for n, _, d, _, _, _ in BODIES if n == "Jupiter")
+    belt_inner = mars_dist + 60
+    belt_outer = jupiter_dist - 60
+    belt_parent, belt_marker = add_asteroid_belt(belt_inner, belt_outer, count=150)
+    add_nametag("Asteroid Belt", belt_marker, offset_z=25.0, font_size=10.0)
+
+    # Camera — starts wide, then tours every object sequentially
+    bpy.ops.object.camera_add(location=(800, -1800, 1400))
+    cam = bpy.context.active_object
+    cam.name = "Camera"
+    cam.data.lens       = 30
+    cam.data.clip_start = 0.01
+    cam.data.clip_end   = 100_000
+    bpy.context.scene.camera = cam
+
+    # Force a depsgraph update so matrix_world is correct for all the
+    # parented/animated objects before we read their positions below
+    bpy.context.view_layer.update()
+
+    # Now that the camera exists, point every nametag's Track-To constraint at it
+    for obj in bpy.data.objects:
+        for con in obj.constraints:
+            if con.type == 'TRACK_TO' and con.target is None:
+                con.target = cam
+
+    # Build the sequential tour: Sun -> Mercury -> Venus -> Earth -> Moon
+    #   -> Satellite -> Mars -> Asteroid Belt -> Jupiter -> Saturn ->
+    #   Uranus -> Neptune
+    # Each stop includes its pivot (None for the Sun, which doesn't orbit;
+    # the Asteroid Belt marker's own pivot/parent for the belt) so the
+    # camera tour can genuinely follow each target's real animated orbit.
+    tour_stops = [("Sun", sun_obj, None, SUN_DISPLAY_R * 5)]
+    belt_view_dist = (belt_outer - belt_inner) * 0.8   # wide enough to see the ring
+    for pname, real_km, _, _, _, _ in BODIES:
+        pobj = planet_objs[pname]
+        ppivot = planet_pivots[pname]
+        # View distance scales with the planet's KNOWN real radius
+        # (.dimensions is unreliable right after creation w/o a depsgraph update)
+        pradius = real_km * KM2U
+        view_dist = max(pradius * 8, 25)
+        tour_stops.append((pname, pobj, ppivot, view_dist))
+
+        if pname == "Earth":
+            # Moon and Satellite both orbit Earth — visit them right after
+            if moon_obj is not None:
+                tour_stops.append(("Moon", moon_obj, moon_pivot, MOON_R * 8))
+            if satellite_obj is not None:
+                tour_stops.append(("Satellite", satellite_obj, satellite_pivot, 15))
+
+        if pname == "Mars":
+            # Insert the asteroid belt stop right after Mars (its real position).
+            # The belt doesn't orbit, so pivot is None (static target).
+            tour_stops.append(("Asteroid Belt", belt_marker, None, belt_view_dist))
+
+    final_frame = setup_camera_tour(cam, tour_stops,
+                                     frames_per_stop=CAM_FRAMES_PER_STOP,
+                                     hold_frames=CAM_HOLD_FRAMES)
+    # TOTAL_FRAMES was pre-computed to already cover the full tour length,
+    # so orbits keep animating through every camera stop. We only extend
+    # frame_end further if the actual tour ran longer than predicted
+    # (e.g. if tour_stops ended up with more entries than TOUR_STOP_COUNT).
+    scene.frame_end = max(scene.frame_end, final_frame + 10)
+    print(f"  Tour final frame: {final_frame}  |  scene.frame_end: {scene.frame_end}")
+
+    # Fix viewport clipping so objects don't vanish when zooming out
+    for screen in bpy.data.screens:
+        for area in screen.areas:
+            if area.type == 'VIEW_3D':
+                for space in area.spaces:
+                    if space.type == 'VIEW_3D':
+                        space.clip_start = 0.01
+                        space.clip_end   = 100_000
+
+    # Dark space
+    world = bpy.context.scene.world or bpy.data.worlds.new("World")
+    bpy.context.scene.world = world
+    world.use_nodes = True
+    world_nodes = world.node_tree.nodes
+    world_links = world.node_tree.links
+    bg = world_nodes.get("Background")
+
+    import os
+    # Try common filenames/extensions for the space background image
+    space_bg_path = None
+    candidates = [
+        "stars.jpg", "stars.png", "stars.hdr", "stars.exr",
+        "space_background.hdr", "space_background.exr",
+        "space_background.jpg", "space_background.png",
+    ]
+    for fname in candidates:
+        candidate_path = os.path.join(TEXTURE_DIR, fname)
+        if os.path.isfile(candidate_path):
+            space_bg_path = candidate_path
+            break
+    if space_bg_path is None:
+        space_bg_path = os.path.join(TEXTURE_DIR, "stars.jpg")  # for the log message below
+
+    if bg and os.path.isfile(space_bg_path):
+        # Wire up: Environment Texture -> Background -> World Output
+        env_tex = world_nodes.new("ShaderNodeTexEnvironment")
+        env_tex.location = (-300, 0)
+        env_tex.image = bpy.data.images.load(space_bg_path)
+        world_links.new(env_tex.outputs["Color"], bg.inputs["Color"])
+        bg.inputs["Strength"].default_value = 1.2   # boosted for ambient fill
+        print(f"  ✅ Space background loaded: {space_bg_path}")
+    elif bg:
+        # Fallback: soft dark-blue ambient instead of near-black, so
+        # textures aren't lost in pitch-black shadow areas
+        bg.inputs["Color"].default_value = (0.02, 0.02, 0.035, 1.0)
+        bg.inputs["Strength"].default_value = 0.8
+        print(f"  ⚠️ No space_background file found in {TEXTURE_DIR} — using soft ambient color")
+
+    # Secondary fill light — a second, dimmer Sun-type light from the
+    # opposite side, so the camera-facing side of planets isn't ever
+    # fully unlit/black. Helps planet textures stay clearly visible
+    # regardless of camera angle relative to the main Sun.
+    bpy.ops.object.light_add(type='SUN', location=(0, 0, 500))
+    fill_light = bpy.context.active_object
+    fill_light.name = "AmbientFillLight"
+    fill_light.data.energy = 1.5
+    fill_light.data.angle = 3.0   # very soft, wide spread shadows
+    fill_light.rotation_euler = (math.radians(35), math.radians(20), 0)
+
+    # Color management — Standard transform avoids AgX desaturating
+    # distant/dim objects into near-grayscale in Rendered viewport.
+    # Exposure boosted so all planet textures render clearly bright.
+    bpy.context.scene.view_settings.view_transform = 'Standard'
+    bpy.context.scene.view_settings.look = 'None'
+    bpy.context.scene.view_settings.exposure = 1.2
+    bpy.context.scene.view_settings.gamma = 1.0
+
+    print(f"\n✅ Done! Sun r={SUN_DISPLAY_R}u, Jupiter r={69911*KM2U:.2f}u")
+    print(f"   Press SPACE to play orbits (600 frames total).")
+
+
+build()</code></pre>
+            </div>
+        </section>
     </div>
 
     <!-- Footer -->
@@ -610,6 +1435,23 @@
         navToggle.addEventListener('click', () => {
             navLinks.classList.toggle('active');
         });
+
+        // Copy code function
+        function copyCode() {
+            const codeElement = document.getElementById('pythonCode');
+            const codeText = codeElement.textContent;
+            
+            navigator.clipboard.writeText(codeText).then(() => {
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i><span>Copied!</span>';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code:', err);
+            });
+        }
     </script>
 </body>
 </html>
