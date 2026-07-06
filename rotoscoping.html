@@ -338,28 +338,28 @@
     </section>
 
     <!-- Side-by-Side Comparison -->
-    <section class="roto-comparison-unique">
-      <div class="roto-comparison-content">
+    <section class="roto-comparison-unique" style="display: block; padding: 4rem 2rem; background: var(--bg);">
+      <div class="roto-comparison-content" style="max-width: 1400px; margin: 0 auto; text-align: center;">
         <span class="roto-eyebrow">Comparison</span>
         <h2>Before & After</h2>
         <p>See the transformation from original footage to rotoscoped animation</p>
 
-        <div class="roto-comparison-grid">
-          <div class="roto-comparison-side">
-            <div class="roto-comparison-label">Original Video</div>
-            <div class="roto-comparison-video">
+        <div class="roto-comparison-grid" style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem; align-items: center; margin-top: 3rem;">
+          <div class="roto-comparison-side" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div class="roto-comparison-label" style="font-size: 1.1rem; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.05em;">Original Video</div>
+            <div class="roto-comparison-video" style="aspect-ratio: 16/9; border-radius: var(--radius-xl); overflow: hidden; box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15); border: 2px solid var(--border);">
               <iframe src="https://www.youtube.com/embed/qZ8QDm5BglE" title="Original Video"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen>
               </iframe>
             </div>
           </div>
-          <div class="roto-comparison-divider">
+          <div class="roto-comparison-divider" style="display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: #fff; font-size: 1.5rem; box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);">
             <i class="fas fa-exchange-alt"></i>
           </div>
-          <div class="roto-comparison-side">
-            <div class="roto-comparison-label">Rotoscoped Output</div>
-            <div class="roto-comparison-video">
+          <div class="roto-comparison-side" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div class="roto-comparison-label" style="font-size: 1.1rem; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.05em;">Rotoscoped Output</div>
+            <div class="roto-comparison-video" style="aspect-ratio: 16/9; border-radius: var(--radius-xl); overflow: hidden; box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15); border: 2px solid var(--border);">
               <iframe src="https://www.youtube.com/embed/dpklZrBRpKk" title="Final Rotoscope Animation"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen>
