@@ -6618,7 +6618,7 @@ main {
 
 .code-section {
   padding: 6rem 3rem;
-  background: var(--bg);
+  background: linear-gradient(135deg, var(--bg) 0%, var(--card) 100%);
   position: relative;
 }
 
@@ -6632,21 +6632,24 @@ main {
   font-weight: 800;
   margin-bottom: 1rem;
   color: var(--text);
+  letter-spacing: -0.02em;
 }
 
 .code-subtitle {
   color: var(--text-muted);
   font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .code-container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  background: var(--card);
+  background: #0d1117;
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(220, 38, 38, 0.1);
 }
 
 .code-header-bar {
@@ -6654,17 +6657,23 @@ main {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-  border-bottom: 1px solid var(--border);
+  background: #161b22;
+  border-bottom: 1px solid #30363d;
 }
 
 .code-language {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #fff;
+  color: #c9d1d9;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.code-language i {
+  color: #58a6ff;
 }
 
 .copy-btn {
@@ -6672,32 +6681,51 @@ main {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: #21262d;
+  border: 1px solid #30363d;
   border-radius: var(--radius-md);
-  color: #fff;
-  font-weight: 600;
-  font-size: 0.9rem;
+  color: #c9d1d9;
+  font-weight: 500;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .copy-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
+  background: #30363d;
+  border-color: #8b949e;
+  color: #fff;
 }
 
 .code-block {
   margin: 0;
   padding: 2rem;
-  background: #1e1e1e;
-  color: #d4d4d4;
-  font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
   font-size: 0.85rem;
-  line-height: 1.6;
+  line-height: 1.8;
   overflow-x: auto;
-  max-height: 600px;
+  max-height: 700px;
   overflow-y: auto;
+}
+
+.code-block::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.code-block::-webkit-scrollbar-track {
+  background: #161b22;
+}
+
+.code-block::-webkit-scrollbar-thumb {
+  background: #30363d;
+  border-radius: 4px;
+}
+
+.code-block::-webkit-scrollbar-thumb:hover {
+  background: #484f58;
 }
 
 @media (max-width: 600px) {
@@ -6705,9 +6733,20 @@ main {
     padding: 3rem 1.5rem;
   }
 
+  .code-container {
+    max-width: 100%;
+  }
+
   .code-block {
     padding: 1rem;
     font-size: 0.75rem;
+    line-height: 1.6;
+  }
+
+  .code-header-bar {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
   }
 }
 
