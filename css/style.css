@@ -1701,6 +1701,7 @@ h1, h2, h3, h4 {
   border-radius: 50%;
   filter: blur(60px);
   animation: glowPulse 4s ease-in-out infinite;
+  pointer-events: none;
 }
 
 @keyframes glowPulse {
